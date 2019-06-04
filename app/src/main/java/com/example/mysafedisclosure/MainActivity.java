@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivity(startIntent);
             }
-        });
+        });//This is just a comment to test this...
 
         Button addBtn = (Button) findViewById(R.id.addBtn);//Reference to the add button
         addBtn.setOnClickListener(new View.OnClickListener() { //This activity will display the sum of two numbers in a TextView
