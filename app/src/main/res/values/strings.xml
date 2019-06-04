@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">MySafeDisclosure</string>
+
+    <string-array name="posts">
+        <item>Post 1</item>
+        <item>Post 2</item>
+        <item>Post 4</item>
+    </string-array>
+
+    <string-array name="sensitiveness">
+        <item>sensitive</item>
+        <item>not sensitive</item>
+        <item>sensitive</item>
+    </string-array>
+
+    <string-array name="dates">
+        <item>02.02.2019</item>
+        <item>05.03.2019</item>
+        <item>07.03.2017</item>
+    </string-array>
+</resources>
