@@ -1,5 +1,6 @@
 package com.example.mysafedisclosure;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivity(startIntent);
             }
-        });//This is just a comment to test this...
+        });
 
         Button addBtn = (Button) findViewById(R.id.addBtn);//Reference to the add button
         addBtn.setOnClickListener(new View.OnClickListener() { //This activity will display the sum of two numbers in a TextView
@@ -44,8 +45,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button googleBtn = (Button) findViewById(R.id.googleBtn);//Reference to the Google button
-        googleBtn.setOnClickListener(new View.OnClickListener() {
+        Button instagramBtn = (Button) findViewById(R.id.instagramBtn);//Reference to the Google button
+        instagramBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse("http://instagram.com/");
+                Intent likeIng = new Intent(Intent.ACTION_VIEW, uri);
+
+                likeIng.setPackage("com.instagram.android");
+
+                try {
+                    startActivity(likeIng);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://instagram.com/")));
+                }
+            }
+        });
+
+        /*googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String google ="http://www.googl.com";
@@ -56,15 +74,16 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(goToGoogle);
                 }
             }
-        });
+        });*/
 
-        Button postsBtn = (Button) findViewById(R.id.postsBtn);//Reference post list activity
+        /*Button postsBtn = (Button) findViewById(R.id.postsBtn);//Reference post list activity
         postsBtn.setOnClickListener(new View.OnClickListener() { //This listener will execute a new activity in a new view
             @Override
             public void onClick(View view) {
                 Intent startIntent = new Intent(getApplicationContext(),PostList.class); //We create an object of the class PostList
                 startActivity(startIntent);
             }
-        });
+        });*/
+
     }
 }

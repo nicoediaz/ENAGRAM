@@ -1,5 +1,13 @@
 <resources>
-    <string name="app_name">MySafeDisclosure</string>
+    <string name="app_name">Instashoot</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="not_registered">Not Registered?</string>
+    <string name="register">REGISTER</string>
+    <string name="confirm_pasword">Confirm Pasword</string>
+    <string name="register_button">Register</string>
+    <string name="already_regstered">Already Registered?</string>
+    <string name="login">Login</string>
 
     <string-array name="posts">
         <item>Post 1</item>
