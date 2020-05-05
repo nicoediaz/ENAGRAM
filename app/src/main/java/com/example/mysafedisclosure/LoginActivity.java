@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {//Dummy comment to test the branck commit
 
     EditText usernameEditText;
     EditText passwordEditText;
