@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                shareFileToInstagram(imgUri);
+                String instaCaption= postEditText.getText().toString().trim();//read the post
+                shareFileToInstagram(imgUri, instaCaption);
 
                 /*String instaCaption= postEditText.getText().toString().trim();//read the post
                 Intent instaIntent = createInstagramIntent(imgUri, instaCaption);
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(share, "Share to"));
     }*/
 
-    private Intent createInstagramIntent(Uri imgUri, String caption) {
+    /*private Intent createInstagramIntent(Uri imgUri, String caption) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/*");
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -224,19 +225,23 @@ public class MainActivity extends AppCompatActivity {
         shareIntent.putExtra(Intent.EXTRA_TEXT, caption);
         shareIntent.setPackage("com.instagram.android");
         return shareIntent;
-    }
+    }*/
 
     //Try this other version with Stories
-    private void shareFileToInstagram(Uri uri) { //Tested and I works!!!!
+    private void shareFileToInstagram(Uri uri, String instaCaption) { //Tested and I works!!!!
         Intent feedIntent = new Intent(Intent.ACTION_SEND);
         feedIntent.setType("image/*");
         feedIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        feedIntent.putExtra(Intent.EXTRA_TEXT, instaCaption);
         feedIntent.setPackage("com.instagram.android");
 
         Intent storiesIntent = new Intent("com.instagram.share.ADD_TO_STORY");
         storiesIntent.setDataAndType(uri, "jpg");
         storiesIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        storiesIntent.putExtra(Intent.EXTRA_TEXT, instaCaption);
         storiesIntent.setPackage("com.instagram.android");
+
+        setCaption(MainActivity.this, instaCaption);
 
         MainActivity.this.grantUriPermission(
                 "com.instagram.android", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
