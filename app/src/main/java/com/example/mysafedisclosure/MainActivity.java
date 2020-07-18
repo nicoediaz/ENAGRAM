@@ -1,15 +1,18 @@
 package com.example.mysafedisclosure;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -72,13 +75,18 @@ public class MainActivity extends AppCompatActivity {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String instaCaption= postEditText.getText().toString().trim();//read the post
+
+                shareFileToInstagram(imgUri);
+
+                /*String instaCaption= postEditText.getText().toString().trim();//read the post
                 Intent instaIntent = createInstagramIntent(imgUri, instaCaption);
 
                 setCaption(MainActivity.this, instaCaption);
-                startActivity(Intent.createChooser(instaIntent, "Share to"));
+                startActivity(Intent.createChooser(instaIntent, "Share to"));*/
             }
         });
+
+
 
         /*Button instagramBtn = (Button) findViewById(R.id.instagramBtn);//Opens the Instagram App
         instagramBtn.setOnClickListener(new View.OnClickListener() {
@@ -216,6 +224,26 @@ public class MainActivity extends AppCompatActivity {
         shareIntent.putExtra(Intent.EXTRA_TEXT, caption);
         shareIntent.setPackage("com.instagram.android");
         return shareIntent;
+    }
+
+    //Try this other version with Stories
+    private void shareFileToInstagram(Uri uri) { //Tested and I works!!!!
+        Intent feedIntent = new Intent(Intent.ACTION_SEND);
+        feedIntent.setType("image/*");
+        feedIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        feedIntent.setPackage("com.instagram.android");
+
+        Intent storiesIntent = new Intent("com.instagram.share.ADD_TO_STORY");
+        storiesIntent.setDataAndType(uri, "jpg");
+        storiesIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        storiesIntent.setPackage("com.instagram.android");
+
+        MainActivity.this.grantUriPermission(
+                "com.instagram.android", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        Intent chooserIntent = Intent.createChooser(feedIntent, "Share on Instagram!");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {storiesIntent});
+        startActivity(chooserIntent);
     }
 
     public static void setCaption(Context context, String caption) { //Set caption in the Image
