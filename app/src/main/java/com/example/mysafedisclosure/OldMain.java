@@ -27,11 +27,11 @@ import android.content.ClipboardManager;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener {
+public class OldMain extends AppCompatActivity {
 
     private EditText postEditText;
     private ImageView mImageView;
-    private Button mChooseBtn, shareBtn, clearBtn;
+    private Button mChooseBtn, shareBtn;
     private Uri imgUri;
 
     private static final int IMAGE_PICK_CODE = 1000;
@@ -46,15 +46,8 @@ public class MainActivity extends AppCompatActivity implements InterventionDialo
         mImageView = findViewById(R.id.image_view);
         mChooseBtn = findViewById(R.id.choose_img_btn);
         shareBtn = findViewById(R.id.share_btn);
-        clearBtn = findViewById(R.id.clear_btn);
         postEditText = (EditText) findViewById(R.id.postEditText);
         imgUri =null;
-
-        shareBtn.setClickable(false);
-        shareBtn.setEnabled(false);
-
-        clearBtn.setClickable(false);
-        clearBtn.setEnabled(false);
 
         mChooseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements InterventionDialo
                         String permissions [] = {Manifest.permission.READ_EXTERNAL_STORAGE};
                         //show popup for runtime permission
                         requestPermissions(permissions, PERMISSION_CODE);
-
                     }
                     else{
                         //permission already granted
@@ -83,31 +75,88 @@ public class MainActivity extends AppCompatActivity implements InterventionDialo
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String instaCaption= postEditText.getText().toString().trim();//read the post
-                openDialog();
-                //shareFileToInstagram(imgUri, instaCaption);
+
+                String instaCaption= postEditText.getText().toString().trim();//read the post
+                shareFileToInstagram(imgUri, instaCaption);
+
+                /*String instaCaption= postEditText.getText().toString().trim();//read the post
+                Intent instaIntent = createInstagramIntent(imgUri, instaCaption);
+
+                setCaption(MainActivity.this, instaCaption);
+                startActivity(Intent.createChooser(instaIntent, "Share to"));*/
             }
         });
 
-        clearBtn.setOnClickListener(new View.OnClickListener() {
+
+
+        /*Button instagramBtn = (Button) findViewById(R.id.instagramBtn);//Opens the Instagram App
+        instagramBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mImageView.setImageResource(R.drawable.ic_baseline_image_24);
-                postEditText.getText().clear();
+                //copy content from text box
+                Uri uri = Uri.parse("http://instagram.com/");
+                Intent likeIng = new Intent(Intent.ACTION_VIEW, uri);
 
-                clearBtn.setEnabled(false);
-                clearBtn.setClickable(false);
+                likeIng.setPackage("com.instagram.android");
 
-                shareBtn.setEnabled(false);
-                shareBtn.setClickable(false);
-                shareBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.instagram_ico_gray, 0, 0, 0);
+                try {
+                    startActivity(likeIng);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://instagram.com/")));
+                }
             }
-        });
-    }
+        });*/
 
-    public void openDialog(){
-        InterventionDialog dialog = new InterventionDialog();
-        dialog.show(getSupportFragmentManager(),"intervention dialog");
+                /*Button secondActivityBtn = (Button) findViewById(R.id.secondActivityBtn);//Reference to the second activity button
+        secondActivityBtn.setOnClickListener(new View.OnClickListener() { //This listener will execute a new activity in a new view
+            @Override
+            public void onClick(View view) {
+                Intent startIntent = new Intent(getApplicationContext(),SecondActivity.class); //We create an object of the class SecondActivity
+                startIntent.putExtra("com.example.myselfdisclosure.MESSAGE", "HELLO WORLD!!!"); //We pas some information to the intent
+
+                startActivity(startIntent);
+            }
+        });*/
+
+        /*Button addBtn = (Button) findViewById(R.id.addBtn);//Reference to the add button
+        addBtn.setOnClickListener(new View.OnClickListener() { //This activity will display the sum of two numbers in a TextView
+            @Override
+            public void onClick(View view) {
+                EditText firstNumEditText = (EditText) findViewById(R.id.firstNumEditText);
+                EditText secondNumEditText = (EditText) findViewById(R.id.secondNumEditText);
+                TextView resultTestView = (TextView) findViewById(R.id.resultTextView);
+
+                int num1 = Integer.parseInt(firstNumEditText.getText().toString());
+                int num2 = Integer.parseInt(secondNumEditText.getText().toString());
+                int result = num1 + num2;
+
+                resultTestView.setText(result + " ");
+            }
+        });*/
+
+        /*googleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String google ="http://www.googl.com";
+                Uri webAddress= Uri.parse(google);
+
+                Intent goToGoogle= new Intent(Intent.ACTION_VIEW, webAddress);
+                if(goToGoogle.resolveActivity(getPackageManager())!=null){
+                    startActivity(goToGoogle);
+                }
+            }
+        });*/
+
+        /*Button postsBtn = (Button) findViewById(R.id.postsBtn);//Reference post list activity
+        postsBtn.setOnClickListener(new View.OnClickListener() { //This listener will execute a new activity in a new view
+            @Override
+            public void onClick(View view) {
+                Intent startIntent = new Intent(getApplicationContext(),PostList.class); //We create an object of the class PostList
+                startActivity(startIntent);
+            }
+        });*/
+
     }
 
     private void pickImageFromGallery() {
@@ -138,18 +187,48 @@ public class MainActivity extends AppCompatActivity implements InterventionDialo
             //set image to image view
             mImageView.setImageURI(data.getData());
             imgUri = data.getData();
-
-            //if(mImageView.getDrawable()!=null)
-            shareBtn.setClickable(true);
-            shareBtn.setEnabled(true);
-            shareBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.instagram_ico, 0, 0, 0);
-
-            clearBtn.setClickable(true);
-            clearBtn.setEnabled(true);
         }
     }
 
-    private void shareFileToInstagram(Uri uri, String instaCaption) {
+    /*String type = "image/*";
+    String filename = "/myPhoto.jpg";
+    String mediaPath = Environment.getExternalStorageDirectory() + filename;
+    createInstagramIntent(type, mediaPath);
+
+    private void createInstagramIntent(String type, String mediaPath)
+    {
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+
+        // Set the MIME type
+        share.setType(type);
+
+        // Create the URI from the media
+        File media = new File(mediaPath);
+        Uri uri = Uri.fromFile(media);
+
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+
+        //set the intent package to Instagram
+        share.setPackage("com.instagram.android");
+
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
+    }*/
+
+    /*private Intent createInstagramIntent(Uri imgUri, String caption) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/*");
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, imgUri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, caption);
+        shareIntent.setPackage("com.instagram.android");
+        return shareIntent;
+    }*/
+
+    //Try this other version with Stories
+    private void shareFileToInstagram(Uri uri, String instaCaption) { //Tested and I works!!!!
         Intent feedIntent = new Intent(Intent.ACTION_SEND);
         feedIntent.setType("image/*");
         feedIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -162,9 +241,9 @@ public class MainActivity extends AppCompatActivity implements InterventionDialo
         storiesIntent.putExtra(Intent.EXTRA_TEXT, instaCaption);
         storiesIntent.setPackage("com.instagram.android");
 
-        setCaption(MainActivity.this, instaCaption);
+        setCaption(OldMain.this, instaCaption);
 
-        MainActivity.this.grantUriPermission(
+        OldMain.this.grantUriPermission(
                 "com.instagram.android", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         Intent chooserIntent = Intent.createChooser(feedIntent, "Share on Instagram!");
@@ -180,11 +259,5 @@ public class MainActivity extends AppCompatActivity implements InterventionDialo
                 clipboard.setPrimaryClip(ClipData.newPlainText("Caption", caption));
             }
         }
-    }
-
-    @Override
-    public void OnPostClicked() {
-        String instaCaption= postEditText.getText().toString().trim();//read the post
-        shareFileToInstagram(imgUri, instaCaption);
     }
 }
