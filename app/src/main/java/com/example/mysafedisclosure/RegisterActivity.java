@@ -12,13 +12,16 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -28,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView textViewLogin;
     private ProgressBar registerProgressBar;
 
-    private static String URL_REGIST="";
+    private static String URL_REGIST="http://10.0.2.2/db_swe_app/register.php";//Change this
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = (Button) findViewById(R.id.registerButton);
         textViewLogin = (TextView) findViewById(R.id.textViewLogin);
 
-        textViewLogin.setOnClickListener(new View.OnClickListener() {
+        textViewLogin.setOnClickListener(new View.OnClickListener() { //Takes you to the Login activity
             @Override
             public void onClick(View view) {
                 Intent LoginIntent = new Intent(RegisterActivity.this,LoginActivity.class);
@@ -54,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
+                Regist();
             }
         });
     }
@@ -63,9 +66,17 @@ public class RegisterActivity extends AppCompatActivity {
         registerProgressBar.setVisibility(View.VISIBLE);
         registerButton.setVisibility(View.GONE);
 
-        final String username= this.usernameEditText.getText().toString().trim();
-        final String password= this.passwordEditText.getText().toString().trim();
-        final String cnfPassword= this.cnfPasswordEditText.getText().toString().trim();
+        final String username= this.usernameEditText.getText().toString();
+        final String password= this.passwordEditText.getText().toString();
+        final String cnfPassword= this.cnfPasswordEditText.getText().toString();
+
+        if(!password.equals(cnfPassword))
+        {
+            registerProgressBar.setVisibility(View.GONE);
+            registerButton.setVisibility(View.VISIBLE);
+            Toast.makeText(RegisterActivity.this,"Password does not match!",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         StringRequest strRequest =new StringRequest(Request.Method.POST, URL_REGIST,
                 new Response.Listener<String>() {
@@ -73,10 +84,11 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         try{
                             JSONObject jsonObject= new JSONObject(response);
-                            String success =jsonObject.getString("success");
+                            String success = jsonObject.getString("success");
 
                             if(success.equals("1")){
                                 Toast.makeText(RegisterActivity.this,"Register Success!",Toast.LENGTH_SHORT).show();
+                                registerProgressBar.setVisibility(View.GONE);
                             }
                         }catch (JSONException e) {
                             e.printStackTrace();
@@ -100,9 +112,16 @@ public class RegisterActivity extends AppCompatActivity {
         {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                return super.getParams();
+                Map<String,String> params =new HashMap<>();
+                params.put("name",username);
+                params.put("password",password);
+                return params;
             }
         };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(strRequest);
+
     }
 
 }
