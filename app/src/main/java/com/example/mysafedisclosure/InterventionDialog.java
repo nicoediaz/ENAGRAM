@@ -16,6 +16,7 @@ public class InterventionDialog extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Privacy Hint")
                 .setMessage("Do you really want to share this?")
+                .setIcon(R.drawable.privacy_icon)//change the icon later
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

@@ -185,7 +185,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     }
 
     @Override
-    public void OnPostClicked() {
+    public void OnPostClicked() { //Add this information to the database
         String instaCaption= postEditText.getText().toString().trim();//read the post
         shareFileToInstagram(imgUri, instaCaption);
     }
