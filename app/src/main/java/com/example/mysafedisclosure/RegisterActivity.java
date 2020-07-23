@@ -39,11 +39,11 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         registerProgressBar = findViewById(R.id.registerProgressBar);
-        usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        cnfPasswordEditText = (EditText) findViewById(R.id.cnfPasswordEditText);
-        registerButton = (Button) findViewById(R.id.registerButton);
-        textViewLogin = (TextView) findViewById(R.id.textViewLogin);
+        usernameEditText = findViewById(R.id.usernameEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        cnfPasswordEditText = findViewById(R.id.cnfPasswordEditText);
+        registerButton = findViewById(R.id.registerButton);
+        textViewLogin = findViewById(R.id.textViewLogin);
 
         textViewLogin.setOnClickListener(new View.OnClickListener() { //Takes you to the Login activity
             @Override
@@ -57,20 +57,20 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Regist();
+                RegisterUsr();
             }
         });
     }
 
-    private void Regist(){
+    private void RegisterUsr(){
         registerProgressBar.setVisibility(View.VISIBLE);
         registerButton.setVisibility(View.GONE);
 
-        final String username= this.usernameEditText.getText().toString();
-        final String password= this.passwordEditText.getText().toString();
-        final String cnfPassword= this.cnfPasswordEditText.getText().toString();
+        final String username= this.usernameEditText.getText().toString().trim();
+        final String password= this.passwordEditText.getText().toString().trim();
+        final String cnfPassword= this.cnfPasswordEditText.getText().toString().trim();
 
-        if(!password.equals(cnfPassword))
+        if(!password.equals(cnfPassword))//The password does not match
         {
             registerProgressBar.setVisibility(View.GONE);
             registerButton.setVisibility(View.VISIBLE);
@@ -86,9 +86,21 @@ public class RegisterActivity extends AppCompatActivity {
                             JSONObject jsonObject= new JSONObject(response);
                             String success = jsonObject.getString("success");
 
-                            if(success.equals("1")){
+                            if(success.equals("2")){//The user already exists
+                                registerProgressBar.setVisibility(View.GONE);
+                                registerButton.setVisibility(View.VISIBLE);
+                                Toast.makeText(RegisterActivity.this,"Username already exists!",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            if(success.equals("1")){//The user was registered
                                 Toast.makeText(RegisterActivity.this,"Register Success!",Toast.LENGTH_SHORT).show();
                                 registerProgressBar.setVisibility(View.GONE);
+                                registerButton.setVisibility(View.VISIBLE);
+
+                                usernameEditText.setText("");
+                                passwordEditText.setText("");
+                                cnfPasswordEditText.setText("");
+
                             }
                         }catch (JSONException e) {
                             e.printStackTrace();
@@ -111,17 +123,15 @@ public class RegisterActivity extends AppCompatActivity {
                 })
         {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() throws AuthFailureError {//This is very important! Here is the data used to generate the query
                 Map<String,String> params =new HashMap<>();
                 params.put("name",username);
                 params.put("password",password);
                 return params;
             }
         };
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(strRequest);
-
     }
 
 }
