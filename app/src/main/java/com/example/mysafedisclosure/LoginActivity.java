@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private TextView textViewRegister;
     private ProgressBar loginProgressBar;
+    SessionManager sessionManager;
 
     private static String URL_LOGIN="http://10.0.2.2/db_swe_app/login.php";//Change this
 
@@ -40,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sessionManager=new SessionManager(this);
 
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
@@ -84,13 +87,13 @@ public class LoginActivity extends AppCompatActivity {
                         String success = jsonObject.getString("success");
 
                         if(success.equals("1")){//Login successful
-                            loginProgressBar.setVisibility(View.GONE);//Change this and redirect to the post activity
+                            loginProgressBar.setVisibility(View.GONE);
                             loginButton.setVisibility(View.VISIBLE);
-                            //Toast.makeText(LoginActivity.this,"Login successful!",Toast.LENGTH_SHORT).show();
-                            //return;
 
+                            sessionManager.createSession(username);
                             Intent postActivityIntent =new Intent(LoginActivity.this, PostActivity.class);
                             startActivity(postActivityIntent);
+                            finish();
 
                         }else {//Wrong username or password
                             loginProgressBar.setVisibility(View.GONE);

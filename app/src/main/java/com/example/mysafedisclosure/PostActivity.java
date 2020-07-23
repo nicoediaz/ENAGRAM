@@ -12,6 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,12 +22,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.content.ClipboardManager;
 
+import java.util.HashMap;
+
 public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener {
 
     private EditText postEditText;
     private ImageView mImageView;
     private Button mChooseBtn, shareBtn, clearBtn;
     private Uri imgUri;
+    SessionManager sessionManager;
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
@@ -34,6 +40,9 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);//Now wih push...
+
+        sessionManager = new SessionManager(this);
+        sessionManager.checkLoggin();//If not Logged in, it will redirect to the Login page
 
         mImageView = findViewById(R.id.image_view);
         mChooseBtn = findViewById(R.id.choose_img_btn);
@@ -47,6 +56,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         clearBtn.setClickable(false);
         clearBtn.setEnabled(false);
+
 
         mChooseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,5 +188,23 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     public void OnPostClicked() {
         String instaCaption= postEditText.getText().toString().trim();//read the post
         shareFileToInstagram(imgUri, instaCaption);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater =getMenuInflater();
+        inflater.inflate(R.menu.post_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.logout_item:{
+                sessionManager.logout();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
