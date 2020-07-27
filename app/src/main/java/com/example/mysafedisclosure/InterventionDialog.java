@@ -16,10 +16,12 @@ public class InterventionDialog extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Privacy Hint")
                 .setMessage("Do you really want to share this?")
+                .setCancelable(false)
                 .setIcon(R.drawable.privacy_icon)//change the icon later
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        listener.OnEditClicked();
 
                     }
                 })
@@ -32,8 +34,9 @@ public class InterventionDialog extends AppCompatDialogFragment {
         return builder.create();
     }
 
-    public interface InterventionDialogListener{
+    public interface InterventionDialogListener{//Methods that must be implemented by the class that uses this interface
         void OnPostClicked();
+        void OnEditClicked();
     }
 
     @Override

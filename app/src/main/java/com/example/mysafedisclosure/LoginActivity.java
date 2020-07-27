@@ -86,11 +86,20 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject jsonObject =new JSONObject(response);
                         String success = jsonObject.getString("success");
 
+                        JSONArray jsonArray =jsonObject.getJSONArray("login");
+
                         if(success.equals("1")){//Login successful
+                            String usr_id="";
+                            for(int i=0; i< jsonArray.length(); i++){
+
+                                JSONObject object = jsonArray.getJSONObject(i);
+
+                                usr_id = object.getString("id").trim();
+                            }
                             loginProgressBar.setVisibility(View.GONE);
                             loginButton.setVisibility(View.VISIBLE);
 
-                            sessionManager.createSession(username);
+                            sessionManager.createSession(username, usr_id);
                             Intent postActivityIntent =new Intent(LoginActivity.this, PostActivity.class);
                             startActivity(postActivityIntent);
                             finish();

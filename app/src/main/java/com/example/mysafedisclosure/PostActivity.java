@@ -22,7 +22,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.content.ClipboardManager;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
+import java.util.Map;
 
 public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener {
 
@@ -31,10 +43,13 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     private Button mChooseBtn, shareBtn, clearBtn;
     private Uri imgUri;
     SessionManager sessionManager;
+    String usrId;
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
     private static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
+
+    private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +58,9 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         sessionManager = new SessionManager(this);
         sessionManager.checkLoggin();//If not Logged in, it will redirect to the Login page
+
+        HashMap<String,String> user_detail = sessionManager.getUserDetail();
+        usrId = user_detail.get(sessionManager.ID);
 
         mImageView = findViewById(R.id.image_view);
         mChooseBtn = findViewById(R.id.choose_img_btn);
@@ -187,7 +205,14 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     @Override
     public void OnPostClicked() { //Add this information to the database
         String instaCaption= postEditText.getText().toString().trim();//read the post
+        recordPopupAction("publish post",instaCaption.length());
         shareFileToInstagram(imgUri, instaCaption);
+    }
+
+    @Override
+    public void OnEditClicked() { //Add this information to the database
+        String instaCaption= postEditText.getText().toString().trim();//read the post
+        recordPopupAction("edit post",instaCaption.length());
     }
 
     @Override
@@ -206,5 +231,45 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void recordPopupAction(final String action, final int postLenght)
+    {
+        StringRequest strRequest = new StringRequest(Request.Method.POST, URL_ACTIVITY_RECORD, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    if(success.equals("1")) {//Activity successful recorded
+                        //Toast.makeText(PostActivity.this,"Activity successfully recorded :-)",Toast.LENGTH_SHORT).show();
+                    }else{//Failed recording
+                        //Toast.makeText(PostActivity.this,"Failed on recording activity :-(",Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(PostActivity.this,"Query Error!"+e.toString(),Toast.LENGTH_SHORT).show();
+                }
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(PostActivity.this,"Query Error!"+error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params =new HashMap<>();
+                params.put("id",usrId);
+                params.put("popup_action",action);
+                params.put("post_lenght",Integer.toString(postLenght));
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(strRequest);
+
     }
 }
