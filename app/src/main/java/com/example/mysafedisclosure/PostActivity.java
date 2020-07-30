@@ -49,7 +49,8 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     private static final int PERMISSION_CODE = 1001;
     private static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
 
-    private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
+    //private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
+    private static String URL_ACTIVITY_RECORD="https://www.uni-due.de/~adf978l/db_swe_app/activity_record.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +128,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
     public void openDialog(){
         InterventionDialog dialog = new InterventionDialog();
+        dialog.setCancelable(false);
         dialog.show(getSupportFragmentManager(),"intervention dialog");
     }
 
