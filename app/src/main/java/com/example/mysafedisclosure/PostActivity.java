@@ -1,7 +1,6 @@
 package com.example.mysafedisclosure;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +34,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+
 
 public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener {
 
@@ -274,4 +275,6 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         requestQueue.add(strRequest);
 
     }
+
+
 }
