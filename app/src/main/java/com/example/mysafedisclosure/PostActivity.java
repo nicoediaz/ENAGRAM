@@ -62,7 +62,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         sessionManager.checkLoggin();//If not Logged in, it will redirect to the Login page
 
         HashMap<String,String> user_detail = sessionManager.getUserDetail();
-        usrId = user_detail.get(sessionManager.ID);
+        usrId = user_detail.get(SessionManager.ID);
 
         mImageView = findViewById(R.id.image_view);
         mChooseBtn = findViewById(R.id.choose_img_btn);
@@ -209,6 +209,9 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     public void OnPostClicked() { //Add this information to the database
         String instaCaption= postEditText.getText().toString().trim();//read the post
         recordPopupAction("publish post",instaCaption.length());
+        if(instaCaption.length()==0){//If the POST field is empty. Otherwise it may show some strange string
+            instaCaption =" ";
+        }
         shareFileToInstagram(imgUri, instaCaption);
     }
 
@@ -263,7 +266,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         })
         {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                 Map<String,String> params =new HashMap<>();
                 params.put("id",usrId);
                 params.put("popup_action",action);
