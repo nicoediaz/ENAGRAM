@@ -16,7 +16,6 @@ public class SessionManager {
     private static final String PREF_NAME ="LOGIN";
     private static final String LOGIN="IS_LOGIN";
     public static final String USER_NAME="USER_NAME";
-    public static final String EMAIL="EMAIL";
     public static final String ID="ID";
 
 
@@ -41,7 +40,7 @@ public class SessionManager {
         if(!this.isLoggin()){
             Intent i = new Intent(context,LoginActivity.class);
             context.startActivity(i);
-            ((PostActivity) context).finish();;
+            ((PostActivity) context).finish();
         }
     }
 
@@ -57,6 +56,6 @@ public class SessionManager {
         editor.commit();
         Intent i = new Intent(context,LoginActivity.class);
         context.startActivity(i);
-        ((PostActivity) context).finish();;
+        ((PostActivity) context).finish();
     }
 }

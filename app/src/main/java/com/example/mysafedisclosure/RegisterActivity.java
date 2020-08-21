@@ -31,8 +31,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView textViewLogin;
     private ProgressBar registerProgressBar;
 
-    //private static String URL_REGIST="http://10.0.2.2/db_swe_app/register.php";
-    private static String URL_REGIST="https://www.uni-due.de/~adf978l/db_swe_app/register.php";
+    private static String URL_REGIST="http://10.0.2.2/db_swe_app/register.php";
+    //private static String URL_REGIST="https://www.uni-due.de/~adf978l/db_swe_app/register.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
                 })
         {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {//This is very important! Here is the data used to generate the query
+            protected Map<String, String> getParams() {//This is very important! Here is the data used to generate the query
                 Map<String,String> params =new HashMap<>();
                 params.put("name",username);
                 params.put("password",password);

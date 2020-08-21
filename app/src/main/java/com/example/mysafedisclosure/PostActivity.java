@@ -1,13 +1,24 @@
 package com.example.mysafedisclosure;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ComponentCallbacks2;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,25 +44,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 
-public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener {
+public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener{
 
     private EditText postEditText;
     private ImageView mImageView;
     private Button mChooseBtn, shareBtn, clearBtn;
     private Uri imgUri;
-    SessionManager sessionManager;
-    String usrId;
+    private SessionManager sessionManager;
+    private String usrId;
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
     private static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
-
-    //private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
-    private static String URL_ACTIVITY_RECORD="https://www.uni-due.de/~adf978l/db_swe_app/activity_record.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +85,6 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         clearBtn.setClickable(false);
         clearBtn.setEnabled(false);
-
 
         mChooseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,9 +113,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String instaCaption= postEditText.getText().toString().trim();//read the post
                 openDialog();
-                //shareFileToInstagram(imgUri, instaCaption);
             }
         });
 
@@ -172,18 +178,29 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         }
     }
 
+    public void amKillProcess(String process)
+    {
+        ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        am.killBackgroundProcesses(process);
+    }
+
     private void shareFileToInstagram(Uri uri, String instaCaption) {
+
+        amKillProcess("com.instagram.android");//we kill the Instagram process in case it is already running
+
         Intent feedIntent = new Intent(Intent.ACTION_SEND);
         feedIntent.setType("image/*");
         feedIntent.putExtra(Intent.EXTRA_STREAM, uri);
         feedIntent.putExtra(Intent.EXTRA_TEXT, instaCaption);
         feedIntent.setPackage("com.instagram.android");
+        feedIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);//added
 
         Intent storiesIntent = new Intent("com.instagram.share.ADD_TO_STORY");
         storiesIntent.setDataAndType(uri, "jpg");
         storiesIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         storiesIntent.putExtra(Intent.EXTRA_TEXT, instaCaption);
         storiesIntent.setPackage("com.instagram.android");
+        storiesIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);//added
 
         setCaption(PostActivity.this, instaCaption);
 
@@ -192,6 +209,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         Intent chooserIntent = Intent.createChooser(feedIntent, "Share on Instagram!");
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {storiesIntent});
+
         startActivity(chooserIntent);
     }
 
@@ -208,7 +226,8 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     @Override
     public void OnPostClicked() { //Add this information to the database
         String instaCaption= postEditText.getText().toString().trim();//read the post
-        recordPopupAction("publish post",instaCaption.length());
+        EventsRecorder.recordPopupAction("publish post", usrId, instaCaption, this);
+
         if(instaCaption.length()==0){//If the POST field is empty. Otherwise it may show some strange string
             instaCaption =" ";
         }
@@ -218,7 +237,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     @Override
     public void OnEditClicked() { //Add this information to the database
         String instaCaption= postEditText.getText().toString().trim();//read the post
-        recordPopupAction("edit post",instaCaption.length());
+        EventsRecorder.recordPopupAction("edit post", usrId, instaCaption, this);
     }
 
     @Override
@@ -238,46 +257,5 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private void recordPopupAction(final String action, final int postLenght)
-    {
-        StringRequest strRequest = new StringRequest(Request.Method.POST, URL_ACTIVITY_RECORD, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    if(success.equals("1")) {//Activity successful recorded
-                        //Toast.makeText(PostActivity.this,"Activity successfully recorded :-)",Toast.LENGTH_SHORT).show();
-                    }else{//Failed recording
-                        //Toast.makeText(PostActivity.this,"Failed on recording activity :-(",Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(PostActivity.this,"Query Error!"+e.toString(),Toast.LENGTH_SHORT).show();
-                }
-            }
-        },new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(PostActivity.this,"Query Error!"+error.toString(),Toast.LENGTH_SHORT).show();
-            }
-        })
-        {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String,String> params =new HashMap<>();
-                params.put("id",usrId);
-                params.put("popup_action",action);
-                params.put("post_lenght",Integer.toString(postLenght));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(strRequest);
-
-    }
-
 
 }
