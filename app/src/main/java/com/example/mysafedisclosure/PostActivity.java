@@ -1,24 +1,14 @@
 package com.example.mysafedisclosure;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Application;
-import android.app.PendingIntent;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
-import android.content.ComponentCallbacks2;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -32,24 +22,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.content.ClipboardManager;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
-
-public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener{
+public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener, GeneralCallbacks{
 
     private EditText postEditText;
     private ImageView mImageView;
@@ -57,6 +38,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     private Uri imgUri;
     private SessionManager sessionManager;
     private String usrId;
+    private List<Intervention> interventionList;
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
@@ -85,6 +67,8 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         clearBtn.setClickable(false);
         clearBtn.setEnabled(false);
+
+        EventsRecorder.readInterventionsTable(this);
 
         mChooseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,4 +242,8 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void VolleyResponse(List<Intervention> intvList) {
+        interventionList = intvList;
+    }
 }
