@@ -6,6 +6,8 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
   $usr_action=$_POST['popup_action'];
   $usr_post_lenght=$_POST['post_lenght'];
   $usr_post_hash=$_POST['post_hash'];
+  $usr_msg_id= $_POST['msg_id'];
+  $usr_image_hash=$_POST['image_hash'];
 
   require_once 'connect.php';
 
@@ -19,7 +21,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
     $action_id= $row['action_id'];
 
-    $sql_insert_action = "INSERT INTO user_activity (popup_action, user_id, post_lenght, post_hash) VALUES ('$action_id','$usr_id',$usr_post_lenght, '$usr_post_hash')";
+    $sql_insert_action = "INSERT INTO user_activity (popup_action, user_id, post_lenght, msg_id, post_hash, image_hash) VALUES ('$action_id','$usr_id',$usr_post_lenght,'$usr_msg_id','$usr_post_hash','$usr_image_hash')";
 
     if(mysqli_query($conn, $sql_insert_action)){#insert successful
       $result["success"]="1";

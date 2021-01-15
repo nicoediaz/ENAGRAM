@@ -4,6 +4,8 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
   $name=$_POST['name'];
   $password=$_POST['password'];
+  $language=$_POST['app_language'];
+  $version=$_POST['app_version'];
 
   $password=password_hash($password,PASSWORD_DEFAULT);
 
@@ -21,7 +23,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     mysqli_close($conn);
   }
   else{
-    $sql ="INSERT INTO users_table(name, password) VALUES ('$name','$password')";
+    $sql ="INSERT INTO users_table(name, password, app_language, app_version) VALUES ('$name','$password','$language','$version')";
 
     if(mysqli_query($conn, $sql)){
       $result["success"]="1";

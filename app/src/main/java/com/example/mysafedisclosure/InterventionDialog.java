@@ -14,29 +14,32 @@ public class InterventionDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Privacy Hint")
-                .setMessage("Do you really want to share this?")
+        String warningMsg = getArguments().getString("Warning");
+        final int idMsg = getArguments().getInt("Id");
+
+        builder.setTitle("Ready to share?")
+                .setMessage(warningMsg)
                 .setCancelable(false)
                 .setIcon(R.drawable.privacy_icon)//change the icon later
                 .setNegativeButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.OnEditClicked();
+                        listener.OnEditClicked(idMsg);
 
                     }
                 })
                 .setPositiveButton("Post", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.OnPostClicked();
+                        listener.OnPostClicked(idMsg);
                     }
                 });
         return builder.create();
     }
 
     public interface InterventionDialogListener{//Methods that must be implemented by the class that uses this interface
-        void OnPostClicked();
-        void OnEditClicked();
+        void OnPostClicked(int idMsg);
+        void OnEditClicked(int idMsg);
     }
 
     @Override

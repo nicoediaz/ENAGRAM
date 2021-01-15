@@ -70,6 +70,8 @@ public class RegisterActivity extends AppCompatActivity {
         final String username= this.usernameEditText.getText().toString().trim();
         final String password= this.passwordEditText.getText().toString().trim();
         final String cnfPassword= this.cnfPasswordEditText.getText().toString().trim();
+        final int app_version = Integer.parseInt(getString(R.string.app_version));
+        final String app_language = getString(R.string.app_language);
 
         if(!password.equals(cnfPassword))//The password does not match
         {
@@ -128,6 +130,8 @@ public class RegisterActivity extends AppCompatActivity {
                 Map<String,String> params =new HashMap<>();
                 params.put("name",username);
                 params.put("password",password);
+                params.put("app_language",app_language);
+                params.put("app_version",Integer.toString(app_version));
                 return params;
             }
         };

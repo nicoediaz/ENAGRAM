@@ -6,8 +6,10 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,11 +27,14 @@ import android.content.ClipboardManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
 
-
+//EventsRecorder.EventsRecorderListener,
 public class PostActivity extends AppCompatActivity implements InterventionDialog.InterventionDialogListener, GeneralCallbacks{
 
     private EditText postEditText;
@@ -68,6 +73,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         clearBtn.setClickable(false);
         clearBtn.setEnabled(false);
 
+        String app_language = getString(R.string.app_language); //Add as parameter in the readInterventionsTable function
         EventsRecorder.readInterventionsTable(this);
 
         mChooseBtn.setOnClickListener(new View.OnClickListener() {
@@ -117,10 +123,13 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         });
     }
 
-    public void openDialog(){
-        InterventionDialog dialog = new InterventionDialog();
-        dialog.setCancelable(false);
-        dialog.show(getSupportFragmentManager(),"intervention dialog");
+    public void openDialog(){ //Check the number of interventions before
+
+        EventsRecorder.countTodaysInterventions(usrId,this);
+
+        //InterventionDialog dialog = new InterventionDialog();
+        //dialog.setCancelable(false);
+        //dialog.show(getSupportFragmentManager(),"intervention dialog");
     }
 
     private void pickImageFromGallery() {
@@ -168,6 +177,19 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         am.killBackgroundProcesses(process);
     }
 
+    private String getRealPathFromURI(Uri contentURI) {
+
+        String thePath = "no-path-found";
+        String[] filePathColumn = {MediaStore.Images.Media.DISPLAY_NAME};
+        Cursor cursor = getContentResolver().query(contentURI, filePathColumn, null, null, null);
+        if(cursor.moveToFirst()){
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            thePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return  thePath;
+    }
+
     private void shareFileToInstagram(Uri uri, String instaCaption) {
 
         amKillProcess("com.instagram.android");//we kill the Instagram process in case it is already running
@@ -208,9 +230,10 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     }
 
     @Override
-    public void OnPostClicked() { //Add this information to the database
+    public void OnPostClicked(int idMsg) { //Add this information to the database
+        String imageName= getRealPathFromURI(imgUri);
         String instaCaption= postEditText.getText().toString().trim();//read the post
-        EventsRecorder.recordPopupAction("publish post", usrId, instaCaption, this);
+        EventsRecorder.recordPopupAction("publish post", usrId, instaCaption, idMsg, imageName, this);
 
         if(instaCaption.length()==0){//If the POST field is empty. Otherwise it may show some strange string
             instaCaption =" ";
@@ -219,9 +242,10 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     }
 
     @Override
-    public void OnEditClicked() { //Add this information to the database
+    public void OnEditClicked(int idMsg) { //Add this information to the database
+        String imageName= getRealPathFromURI(imgUri);
         String instaCaption= postEditText.getText().toString().trim();//read the post
-        EventsRecorder.recordPopupAction("edit post", usrId, instaCaption, this);
+        EventsRecorder.recordPopupAction("edit post", usrId, instaCaption, idMsg, imageName, this);
     }
 
     @Override
@@ -245,5 +269,69 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     @Override
     public void VolleyResponse(List<Intervention> intvList) {
         interventionList = intvList;
+    }
+
+    //@Override
+    public void OnPopupsCount(int today_popups, int ignored_popups, int accepted_popups, int last_popup) {
+
+        int app_version = Integer.parseInt(getString(R.string.app_version));
+
+        if(app_version==1){
+            NoIntervention();
+        }
+        else{
+            if (true) { //We intervene a maximum of 5 times a day. Interventions should have at least 10 min in between: today_popups<=5 && last_popup>10
+                Bundle args = new Bundle();
+                int warning_id = -1;
+
+                if(app_version==2){// Only the "Ready to share legend is shown"
+                    args.putString("Warning", "");
+                }
+                if(app_version==3){// Select a random warning message
+                    Random rand = new Random();
+                    warning_id = rand.nextInt(26); //"Other users have received wake-up calls at work after posting about alcohol consumption"
+
+                    String warning_msg = getWarningFromList(warning_id);
+                    args.putString("Warning", warning_msg);
+                }
+
+                args.putInt("Id",warning_id);
+
+                InterventionDialog dialog = new InterventionDialog();
+                dialog.setArguments(args);
+                dialog.setCancelable(false);
+                dialog.show(getSupportFragmentManager(), "intervention dialog");
+            } else {
+                NoIntervention();
+            }
+        }
+    }
+
+    private String getWarningFromList(int warning_id) {
+
+        boolean found = false;
+        String message = null;
+
+        ListIterator<Intervention> interventionListIterator = interventionList.listIterator();
+
+        while (interventionListIterator.hasNext() && !found) {
+            Intervention i = interventionListIterator.next();
+
+            if(i.getId()==warning_id){
+                found =true;
+                message = i.getMessage();
+            }
+        }
+
+        return message;
+    }
+
+    public void NoIntervention(){
+        String instaCaption= postEditText.getText().toString().trim();//read the post
+
+        if(instaCaption.length()==0){//If the POST field is empty. Otherwise it may show some strange string
+            instaCaption =" ";
+        }
+        shareFileToInstagram(imgUri, instaCaption);
     }
 }

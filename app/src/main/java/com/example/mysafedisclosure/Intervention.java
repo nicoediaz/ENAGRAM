@@ -14,4 +14,20 @@ public class Intervention {
         risk=aRisk;
     }
 
+    public int getId(){
+        return id;
+    }
+
+    public String getCategory(){
+        return category;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public float getRisk(){
+        return risk;
+    }
+
 }
