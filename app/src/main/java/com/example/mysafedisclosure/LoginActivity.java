@@ -35,8 +35,9 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loginProgressBar;
     SessionManager sessionManager;
 
-    private static String URL_LOGIN="http://10.0.2.2/db_swe_app/login.php";
-    //private static String URL_LOGIN="https://www.uni-due.de/~adf978l/db_swe_app/login.php";
+    //private static String URL_LOGIN="http://10.0.2.2/db_swe_app/login.php";
+
+    private static String URL_LOGIN="https://www.uni-due.de/~adf978l/db_swe_app/login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
