@@ -24,10 +24,12 @@ public abstract class EventsRecorder {
     //private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
     //private static String URL_INTERVENTIONS="http://10.0.2.2/db_swe_app/interventions.php";
     //private static String URL_POPUPSCOUNT="http://10.0.2.2/db_swe_app/popups_count.php";
+    //private static String URL_INTERVENTIONS_DE="http://10.0.2.2/db_swe_app/interventions_de.php";
 
     private static String URL_ACTIVITY_RECORD="https://www.uni-due.de/~adf978l/db_swe_app/activity_record.php";
     private static String URL_INTERVENTIONS="https://www.uni-due.de/~adf978l/db_swe_app/interventions.php";
     private static String URL_POPUPSCOUNT="https://www.uni-due.de/~adf978l/db_swe_app/popups_count.php";
+    private static String URL_INTERVENTIONS_DE="https://www.uni-due.de/~adf978l/db_swe_app/interventions_de.php";
 
 
     public static void recordPopupAction(final String action, final String usrId, final String caption, final int idMsg, final String imageName, final Context cntx)
@@ -79,7 +81,17 @@ public abstract class EventsRecorder {
 
     public static void readInterventionsTable(final Context cntx) //Read all the interventions table and keep it locally
     {
-        StringRequest strRequest = new StringRequest(Request.Method.POST, URL_INTERVENTIONS, new Response.Listener<String>() {
+        final String app_language = cntx.getString(R.string.app_language);
+        final String url_interventions;
+
+        if(app_language.equals("DE")){
+            url_interventions=URL_INTERVENTIONS_DE;
+        }
+        else{
+            url_interventions=URL_INTERVENTIONS;
+        }
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, url_interventions, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

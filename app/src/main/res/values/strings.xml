@@ -9,7 +9,7 @@
     <string name="already_regstered">Already Registered?</string>
     <string name="login">Login</string>
     <string name="app_version">3</string>
-    <string name="app_language">EN</string>
+    <string name="app_language">DE</string>
 
     <string-array name="posts">
         <item>Post 1</item>

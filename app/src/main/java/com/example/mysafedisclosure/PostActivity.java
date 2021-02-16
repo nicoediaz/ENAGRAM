@@ -44,6 +44,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     private SessionManager sessionManager;
     private String usrId;
     private List<Intervention> interventionList;
+    private List<Integer> shownInterventions;
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
@@ -59,6 +60,8 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         HashMap<String,String> user_detail = sessionManager.getUserDetail();
         usrId = user_detail.get(SessionManager.ID);
+
+        shownInterventions = new ArrayList<Integer>();
 
         mImageView = findViewById(R.id.image_view);
         mChooseBtn = findViewById(R.id.choose_img_btn);
@@ -274,24 +277,52 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
     //@Override
     public void OnPopupsCount(int today_popups, int ignored_popups, int accepted_popups, int last_popup) {
 
+        if(today_popups==0)//today_popups==0
+        {
+            shownInterventions.clear();
+            shownInterventions = new ArrayList<Integer>();
+        }
+
         int app_version = Integer.parseInt(getString(R.string.app_version));
 
         if(app_version==1){
             NoIntervention();
         }
         else{
-            if (true) { //We intervene a maximum of 5 times a day. Interventions should have at least 10 min in between: today_popups<=5 && last_popup>10
+            if ((today_popups ==0) || (today_popups<5 && last_popup>1)) { //TODO: Change time in between
+                //if ((today_popups ==0) || (today_popups<5 && last_popup>10)) {//We intervene a maximum of 5 times a day. Interventions should have at least 10 min in between
                 Bundle args = new Bundle();
                 int warning_id = -1;
+                int popup_counter = today_popups +1;
+                String app_language = getString(R.string.app_language);
+
+                if(app_language.equals("DE")){
+                    args.putString("Header", "Bereit zum Teilen?");
+                }
+                else{
+                    args.putString("Header", "Ready to share?");
+                }
 
                 if(app_version==2){// Only the "Ready to share legend is shown"
                     args.putString("Warning", "");
                 }
                 if(app_version==3){// Select a random warning message
                     Random rand = new Random();
-                    warning_id = rand.nextInt(26); //"Other users have received wake-up calls at work after posting about alcohol consumption"
+                    String warning_msg="";
 
-                    String warning_msg = getWarningFromList(warning_id);
+                    do{ //we want to make sure that the same message is not displayed twice in the same day
+                        warning_id = rand.nextInt(26); //"Other users have received wake-up calls at work after posting about alcohol consumption"
+                    }while(shownInterventions.contains(warning_id));
+
+                    if(app_language.equals("DE")){
+                        //warning_msg = "<p style=\"text-align:center\"><b>Fact of the day "+popup_counter+":</b><br/>"+getWarningFromList(warning_id)+"</p>";
+                        warning_msg = "<b>Fakt des Tages #"+popup_counter+":</b><br/>"+getWarningFromList(warning_id);
+                    }
+                    else{
+                        //warning_msg = "<p style=\"text-align:center\"><b>Fact of the day "+popup_counter+":</b><br/>"+getWarningFromList(warning_id)+"</p>";
+                        warning_msg = "<b>Fact of the day #"+popup_counter+":</b><br/>"+getWarningFromList(warning_id);
+                    }
+
                     args.putString("Warning", warning_msg);
                 }
 
