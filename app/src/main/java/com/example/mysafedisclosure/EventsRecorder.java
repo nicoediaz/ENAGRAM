@@ -21,10 +21,10 @@ import java.util.Map;
 
 public abstract class EventsRecorder {
 
-    //private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
-    //private static String URL_INTERVENTIONS="http://10.0.2.2/db_swe_app/interventions.php";
-    //private static String URL_POPUPSCOUNT="http://10.0.2.2/db_swe_app/popups_count.php";
-    //private static String URL_INTERVENTIONS_DE="http://10.0.2.2/db_swe_app/interventions_de.php";
+    /*private static String URL_ACTIVITY_RECORD="http://10.0.2.2/db_swe_app/activity_record.php";
+    private static String URL_INTERVENTIONS="http://10.0.2.2/db_swe_app/interventions.php";
+    private static String URL_POPUPSCOUNT="http://10.0.2.2/db_swe_app/popups_count.php";
+    private static String URL_INTERVENTIONS_DE="http://10.0.2.2/db_swe_app/interventions_de.php";*/
 
     private static String URL_ACTIVITY_RECORD="https://www.uni-due.de/~adf978l/db_swe_app/activity_record.php";
     private static String URL_INTERVENTIONS="https://www.uni-due.de/~adf978l/db_swe_app/interventions.php";
