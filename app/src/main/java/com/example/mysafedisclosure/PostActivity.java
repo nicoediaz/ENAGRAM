@@ -289,7 +289,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
             NoIntervention();
         }
         else{
-            if ((today_popups ==0) || (today_popups<5 && last_popup>1)) { //TODO: Change time in between
+            if ((today_popups ==0) || (today_popups<5 && last_popup>60)) { //TODO: Change time in between (to 60 min)
                 //if ((today_popups ==0) || (today_popups<5 && last_popup>10)) {//We intervene a maximum of 5 times a day. Interventions should have at least 10 min in between
                 Bundle args = new Bundle();
                 int warning_id = -1;
