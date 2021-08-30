@@ -285,7 +285,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
 
         int app_version = Integer.parseInt(getString(R.string.app_version));
 
-        if(app_version==1){
+        if(app_version==1){ //Here for APP 1
             NoIntervention();
         }
         else{
@@ -357,12 +357,18 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
         return message;
     }
 
-    public void NoIntervention(){
+    public void NoIntervention(){ //We do not generate an intervention but we record the event
+        int warning_id = -11;
+        OnPostClicked(warning_id);
+    }
+
+    /*public void NoIntervention(){
         String instaCaption= postEditText.getText().toString().trim();//read the post
 
         if(instaCaption.length()==0){//If the POST field is empty. Otherwise it may show some strange string
             instaCaption =" ";
         }
+
         shareFileToInstagram(imgUri, instaCaption);
-    }
+    }*/
 }
