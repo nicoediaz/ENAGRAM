@@ -1,8 +1,12 @@
 package com.example.mysafedisclosure;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +28,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity  {
 
     private EditText usernameEditText, passwordEditText, cnfPasswordEditText;
     private Button registerButton;
@@ -97,7 +101,10 @@ public class RegisterActivity extends AppCompatActivity {
                                 return;
                             }
                             if(success.equals("1")){//The user was registered
-                                Toast.makeText(RegisterActivity.this,"Register Success!",Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(RegisterActivity.this,"Register Success!",Toast.LENGTH_SHORT).show();
+                                RegistrationDialog regDialog = new RegistrationDialog();
+                                regDialog.show(getSupportFragmentManager(),"success");
+
                                 registerProgressBar.setVisibility(View.GONE);
                                 registerButton.setVisibility(View.VISIBLE);
 

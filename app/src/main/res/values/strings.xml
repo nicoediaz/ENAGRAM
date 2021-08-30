@@ -8,7 +8,7 @@
     <string name="register_button">Register</string>
     <string name="already_regstered">Already Registered?</string>
     <string name="login">Login</string>
-    <string name="app_version">2</string>
+    <string name="app_version">3</string>
     <string name="app_language">DE</string>
 
     <string-array name="posts">
