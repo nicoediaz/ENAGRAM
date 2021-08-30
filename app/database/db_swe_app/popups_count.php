@@ -6,16 +6,16 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
   require_once 'connect.php';
 
-  $sql_action_id = "SELECT count(*) FROM user_activity WHERE DATE(timestamp) = CURDATE() AND user_id = '$usr_id'";
+  $sql_action_id = "SELECT count(*) FROM user_activity WHERE DATE(timestamp) = CURDATE() AND user_id = '$usr_id' AND msg_id <> -11";
   $response1 = mysqli_query($conn, $sql_action_id);
 
-  $sql_action_id = "SELECT count(*) FROM user_activity WHERE user_id = '$usr_id' AND popup_action = 1";
+  $sql_action_id = "SELECT count(*) FROM user_activity WHERE user_id = '$usr_id' AND popup_action = 1 AND msg_id <> -11";
   $response2 = mysqli_query($conn, $sql_action_id);
 
-  $sql_action_id = "SELECT count(*) FROM user_activity WHERE user_id = '$usr_id' AND popup_action = 0";
+  $sql_action_id = "SELECT count(*) FROM user_activity WHERE user_id = '$usr_id' AND popup_action = 0 AND msg_id <> -11";
   $response3 = mysqli_query($conn, $sql_action_id);
 
-  $sql_action_id = "SELECT TIMESTAMPDIFF(MINUTE,timestamp,CURRENT_TIMESTAMP) AS timediff FROM user_activity WHERE timestamp = (SELECT MAX(timestamp) FROM user_activity) AND user_id = '$usr_id'";
+  $sql_action_id = "SELECT TIMESTAMPDIFF(MINUTE,timestamp,CURRENT_TIMESTAMP) AS timediff FROM user_activity WHERE timestamp = (SELECT MAX(timestamp) FROM user_activity WHERE user_id = '$usr_id' AND msg_id <> -11)";
   $response4 = mysqli_query($conn, $sql_action_id);
 
   $result =array();
