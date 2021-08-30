@@ -311,7 +311,7 @@ public class PostActivity extends AppCompatActivity implements InterventionDialo
                     String warning_msg="";
 
                     do{ //we want to make sure that the same message is not displayed twice in the same day
-                        warning_id = 1 + rand.nextInt(27); //"Other users have received wake-up calls at work after posting about alcohol consumption"
+                        warning_id = 1 + rand.nextInt(26); //"Other users have received wake-up calls at work after posting about alcohol consumption"
                     }while(shownInterventions.contains(warning_id));
 
                     if(app_language.equals("DE")){
