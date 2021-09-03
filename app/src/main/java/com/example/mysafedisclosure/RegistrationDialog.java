@@ -12,9 +12,9 @@ public class RegistrationDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder =new AlertDialog.Builder(getActivity());
 
-        String dialog_msg = "Registration code: <b>SWE-3NA-009</b>";
+        String dialog_msg = "Registrierungscode: <b>SWE-3NA-009</b>";
 
-        builder.setTitle("Registration Successful!")
+        builder.setTitle("Anmeldung erfolgreich!")
                 .setMessage(Html.fromHtml(dialog_msg))
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
