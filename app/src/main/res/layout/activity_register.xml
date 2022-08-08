@@ -14,33 +14,44 @@
         android:layout_width="wrap_content"
         android:layout_height="130dp"
         android:layout_marginTop="80dp"
-        app:srcCompat="@drawable/app_icon"/>
+        app:srcCompat="@drawable/app_icon_v2"/>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    <EditText
-        android:id="@+id/usernameEditText"
-        android:layout_width="220dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="20dp"
-        android:drawableLeft="@drawable/user_mdpi"
-        android:background="#ffffff"
-        android:hint="@string/username"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:hintEnabled="false">
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="230dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="#ffffff"
+            android:drawableLeft="@drawable/user_mdpi"
+            android:drawableStart="@drawable/user_mdpi"
+            android:drawablePadding="5dp"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:hint="@string/username" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:hintEnabled="false"
         app:passwordToggleEnabled="true">
     <EditText
         android:id="@+id/passwordEditText"
-        android:layout_width="220dp"
+        android:layout_width="230dp"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:background="#ffffff"
         android:drawableLeft="@drawable/password_mdpi"
         android:drawableStart="@drawable/password_mdpi"
+        android:drawablePadding="5dp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
         android:hint="@string/password"
         android:inputType="textPassword"/>
     </android.support.design.widget.TextInputLayout>
@@ -48,15 +59,20 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:hintEnabled="false"
         app:passwordToggleEnabled="true">
     <EditText
         android:id="@+id/cnfPasswordEditText"
-        android:layout_width="220dp"
+        android:layout_width="230dp"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:background="#ffffff"
         android:hint="@string/confirm_pasword"
         android:inputType="textPassword"
+        android:drawablePadding="5dp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
         android:drawableLeft="@drawable/password_mdpi"
         android:drawableStart="@drawable/password_mdpi"/>
     </android.support.design.widget.TextInputLayout>
@@ -71,7 +87,7 @@
     <Button
         android:id="@+id/registerButton"
         android:layout_width="200dp"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:layout_marginTop="20dp"
         android:text="@string/register_button" />
 
